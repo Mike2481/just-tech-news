@@ -67,7 +67,10 @@ router.put("/:id", (req, res) => {
   // This .update() method combines the parameters for creating data and looking up data.
   // We pass in req.body to provide the new data we want to use in the update and
   // req.params.id to indicate where exactly we want that new data to be used.
+
+  // pass in req.body instead to only update what's passed through
   User.update(req.body, {
+    individualHooks: true, // This was added in as a requirement to use beforeUpdate hook in User model
     where: {
       id: req.params.id,
       // sql version would be UPDATE users
