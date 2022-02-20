@@ -5,7 +5,10 @@ const { User } = require("../../models");
 router.get("/", (req, res) => {
   // Access our User model and run .findAll() method
   // User.findAll() is the same as sql query SELECT * FROM users;
-  User.findAll()
+  User.findAll({
+      attributes: { exclude: ['password'] } // added attribute to exclude password on GET It's in an array because 
+                                            // if we want to exclude more than one, we can just add more
+  })
     // Sequelize is a JavaScript Promise-based library,
     // meaning we get to use .then() with all of the model methods
     .then((dbUserData) => res.json(dbUserData))
@@ -20,8 +23,9 @@ router.get("/:id", (req, res) => {
   // User.findOne along with passing in the argument of where is like
   // SELECT * FROM users WHERE id = 1
   User.findOne({
-    where: {
-      id: req.params.id,
+      attributes: { exclude: ['password'] }, // Can be chained together
+      where: {
+      id: req.params.id
     },
   })
     .then((dbUserData) => {
