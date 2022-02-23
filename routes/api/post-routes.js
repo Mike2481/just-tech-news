@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const sequelize = require("../../config/connection");
-const { Post, User, Vote } = require("../../models"); // Includes both Post and User because In a query to the post table,
+const { Post, User, Vote, Comment } = require("../../models"); // Includes both Post and User because In a query to the post table,
 // we would like to retrieve not only information about each post, but also the user that posted it.
 //With the foreign key, user_id, we can form a JOIN, an essential characteristic of the relational data model.
 
@@ -8,6 +8,8 @@ const { Post, User, Vote } = require("../../models"); // Includes both Post and 
 router.get("/", (req, res) => {
   console.log("======================");
   Post.findAll({
+    // This will ensure that the latest posted articles will appear first.
+    order: [['created_at', 'DESC']],
     // Query configuration
     attributes: [
       "id",
@@ -22,10 +24,16 @@ router.get("/", (req, res) => {
       ]
     ],
     // Notice that the order property is assigned a nested array that orders by the created_at column in descending order.
-    // This will ensure that the latest posted articles will appear first.
-    order: [["created_at", "DESC"]],
     // JOIN to the User table
     include: [
+      {
+        model: Comment,
+        attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+        include: {
+          model: User,
+          attributes: ['username']
+        }
+      },
       {
         model: User,
         attributes: ["username"],
@@ -57,6 +65,14 @@ router.get("/:id", (req, res) => {
       ]
     ],
     include: [
+      {
+        model: Comment,
+        attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+        include: {
+          model: User,
+          attributes: ['username']
+        }
+      },
       {
         model: User,
         attributes: ['username'],
