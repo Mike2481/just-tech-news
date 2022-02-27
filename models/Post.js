@@ -6,22 +6,24 @@ class Post extends Model {
   static upvote(body, models) {
     return models.Vote.create({
       user_id: body.user_id,
-      post_id: body.post_id
+      post_id: body.post_id,
     }).then(() => {
       return Post.findOne({
         where: {
-          id: body.post_id
+          id: body.post_id,
         },
         attributes: [
-          'id',
-          'post_url',
-          'title',
-          'created_at',
+          "id",
+          "post_url",
+          "title",
+          "created_at",
           [
-            sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'),
-            'vote_count'
-          ]
-        ]
+            sequelize.literal(
+              "(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)"
+            ),
+            "vote_count",
+          ],
+        ],
       });
     });
   }
@@ -45,21 +47,21 @@ Post.init(
       allowNull: false,
       validate: {
         isUrl: true,
-      }
+      },
     },
     user_id: {
       type: DataTypes.INTEGER,
-      // Using the references property, we establish the relationship between this post and the user by creating a reference to the User model, 
-      // specifically to the id column that is defined by the key property, which is the primary key. 
+      // Using the references property, we establish the relationship between this post and the user by creating a reference to the User model,
+      // specifically to the id column that is defined by the key property, which is the primary key.
       // The user_id is conversely defined as the foreign key and will be the matching link.
       references: {
-        model: 'user',
-        key: 'id',
-      }
-    }
+        model: "user",
+        key: "id",
+      },
+    },
   },
   {
-// In the second parameter of the init method, we configure the metadata, including the naming conventions.
+    // In the second parameter of the init method, we configure the metadata, including the naming conventions.
     // pass in our imported sequelize connection (the direct connection to our database) - required at the top
     sequelize,
     // don't pluralize name of database table
@@ -67,7 +69,7 @@ Post.init(
     // use underscores instead of camel-casing (i.e. `comment_text` and not `commentText`)
     underscored: true,
     // make it so our model name stays lowercase in the database
-    modelName: 'post',
+    modelName: "post",
   }
 );
 
