@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
+const helpers = require('./utils/helpers');
 
 
 // makes stylesheet available to client along with app.use(express.static(path.join(__dirname, 'public'))); found below
@@ -19,7 +20,7 @@ const sequelize = require('./config/connection');
 
 // set up Handlebars.js as your app's template engine of choice:
 const exphbs = require('express-handlebars');
-const hbs = exphbs.create({});
+const hbs = exphbs.create({ helpers });
 
 const sess = {
   secret: 'Super secret secret',
